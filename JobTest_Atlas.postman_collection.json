@@ -1,0 +1,244 @@
+{
+	"info": {
+		"_postman_id": "b5e8a845-17ff-42a5-9e75-098f21a6c35f",
+		"name": "JobTest_Atlas",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "21769904"
+	},
+	"item": [
+		{
+			"name": "Get all the User's data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"const randnumber = Math.floor((Math.random()*8 +1));\r",
+							"const response = pm.response.json();\r",
+							"pm.globals.set(\"id\", response[randnumber].id);\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[randnumber].id).to.be.a(\"number\");\r",
+							"    pm.expect(responseJson[randnumber].name).to.be.a('string');\r",
+							"    pm.expect(responseJson[randnumber].email).to.be.a('string');\r",
+							"    pm.expect(responseJson[randnumber].gender).to.be.a('string');\r",
+							"    pm.expect(responseJson[randnumber].status).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API response contians the expected header\", () => {\r",
+							"  pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API responds within the expected threshhold\", () => {\r",
+							"  const expectedTimeInMilliseconds = 500;\r",
+							"  pm.expect(pm.response.responseTime).to.be.lessThan(\r",
+							"    expectedTimeInMilliseconds + 1,\r",
+							"    `The endpoint did not respond within ${expectedTimeInMilliseconds} ms. Response came in ${pm.response.responseTime} ms`\r",
+							"  );\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}",
+					"host": [
+						"{{base_url}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get specific User's data",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"The response has all properties\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson[0].id).to.be.a(\"number\");\r",
+							"    pm.expect(responseJson[0].name).to.be.a('string');\r",
+							"    pm.expect(responseJson[0].email).to.be.a('string');\r",
+							"    pm.expect(responseJson[0].gender).to.be.a('string');\r",
+							"    pm.expect(responseJson[0].status).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API response contians the expected header\", () => {\r",
+							"  pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API responds within the expected threshhold\", () => {\r",
+							"  const expectedTimeInMilliseconds = 400;\r",
+							"  pm.expect(pm.response.responseTime).to.be.lessThan(\r",
+							"    expectedTimeInMilliseconds + 1,\r",
+							"    `The endpoint did not respond within ${expectedTimeInMilliseconds} ms. Response came in ${pm.response.responseTime} ms`\r",
+							"  );\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": []
+				},
+				"url": {
+					"raw": "{{base_url}}/?id={{id}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						""
+					],
+					"query": [
+						{
+							"key": "id",
+							"value": "{{id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create User Profile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"randomString =pm.variables.replaceIn('{{$randomFirstName}}');\r",
+							"pm.globals.set(\"name\",randomString);\r",
+							"const randnumber = Math.floor((Math.random()*100 +1));\r",
+							"pm.globals.set(\"number\", randnumber);\r",
+							"var gender = [\"Male\", \"Female\"] \r",
+							"var status = [\"Active\", \"InActive\"]\r",
+							"pm.variables.set(\"gender\", gender[_.random(gender.length -1)]);\r",
+							"pm.variables.set(\"status\", status[_.random(status.length -1)]);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"The response has all properties\", () => {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.id).to.be.a(\"number\");\r",
+							"    pm.expect(responseJson.name).to.be.a('string');\r",
+							"    pm.expect(responseJson.email).to.be.a('string');\r",
+							"    pm.expect(responseJson.gender).to.be.a('string');\r",
+							"    pm.expect(responseJson.status).to.be.a('string');\r",
+							"});\r",
+							"\r",
+							"const schema = { \r",
+							"    \"type\": \"object\",\r",
+							"    \"properties\": { \r",
+							"        \"id\":{\r",
+							"            \"type\":\"number\"\r",
+							"        },\r",
+							"        \"name\": {\r",
+							"            \"type\": \"string\"\r",
+							"        },\r",
+							"        \"email\": {\r",
+							"            \"type\": \"string\"\r",
+							"        },\r",
+							"        \"gender\": {\r",
+							"            \"type\": \"string\"\r",
+							"        },\r",
+							"        \"status\": {\r",
+							"            \"type\": \"string\"\r",
+							"        }\r",
+							"    },\r",
+							"    \"required\": [\r",
+							"        \"id\",\r",
+							"        \"name\", \r",
+							"        \"email\",\r",
+							"        \"gender\",\r",
+							"        \"status\"\r",
+							"    ]\r",
+							"};\r",
+							"\r",
+							"pm.test(\"Validating schema\", () => { \r",
+							"pm.response.to.have.jsonSchema (schema);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API response contians the expected header\", () => {\r",
+							"  pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"API responds within the expected threshhold\", () => {\r",
+							"  const expectedTimeInMilliseconds = 400;\r",
+							"  pm.expect(pm.response.responseTime).to.be.lessThan(\r",
+							"    expectedTimeInMilliseconds + 1,\r",
+							"    `The endpoint did not respond within ${expectedTimeInMilliseconds} ms. Response came in ${pm.response.responseTime} ms`\r",
+							"  );\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}?name={{name}}&email={{name}}{{number}}@gmail.com&gender={{gender}}&status={{status}}&access-token=8567e7dbe6171d3ec91f0b2f35c92022d1a6aabc110610bd98fab0a78afcc273",
+					"host": [
+						"{{base_url}}"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "{{name}}"
+						},
+						{
+							"key": "email",
+							"value": "{{name}}{{number}}@gmail.com"
+						},
+						{
+							"key": "gender",
+							"value": "{{gender}}"
+						},
+						{
+							"key": "status",
+							"value": "{{status}}"
+						},
+						{
+							"key": "access-token",
+							"value": "8567e7dbe6171d3ec91f0b2f35c92022d1a6aabc110610bd98fab0a78afcc273"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
